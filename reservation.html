@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Your reservation{% endblock %}
+{% block content %}
+
+<a class="back-link" href="{{ url_for('exhibition', slug=ex.slug) }}">&#8592; Back</a>
+
+<div class="reservation-hero">
+  <div class="orb"></div>
+  <h1 style="font-size:34px;">Your reservation</h1>
+  <p style="max-width:420px; font-weight:600;">At checkout, your ticket will reservation.<br>You can pay for your ticket within 30 minutes.</p>
+</div>
+
+<form method="post" action="{{ url_for('reservation_confirm') }}" id="reservation-form">
+<div class="ticket-summary">
+  <div>
+    <h3>{{ ex.title }}</h3>
+    <div class="text-muted" style="margin-bottom:14px;">Exhibition</div>
+    <div class="ticket-photo" {% if ex.ticket_image or ex.image %}style="background-image:url('{{ url_for('static', filename=ex.ticket_image or ex.image) }}')"{% endif %}></div>
+    {% if ex.intro %}
+    <p style="margin-top:18px; color:#4c4642; font-size:14px;">{{ ex.intro }}</p>
+    {% endif %}
+  </div>
+
+  <div>
+    <div class="session-card">
+      <div class="label">{{ ex.interactions[booking.interaction].label }}</div>
+      <div class="row">&#128337; {{ booking.time_slot }}</div>
+      <div class="row">&#128197; {{ booking.date_label }}</div>
+      <a class="change-link" href="{{ url_for('exhibition', slug=ex.slug) }}">&#9998; Change</a>
+    </div>
+
+    <h3 style="font-size:20px; margin-top:26px;">Ticket price</h3>
+    <div class="price-table" id="price-table">
+      {% for key, t in ex.tickets.items() %}
+      <div class="price-row" data-ticket="{{ key }}">
+        <span>{{ t.label }}</span>
+        <span class="price">$ {{ t.price }}</span>
+        <div class="qty-control">
+          <button type="button" class="qty-minus">&#8722;</button>
+          <span class="qty-value">{{ order.quantity if order.ticket_type == key else 0 }}</span>
+          <button type="button" class="qty-plus">&#43;</button>
+        </div>
+      </div>
+      {% endfor %}
+      <div class="price-total-row">
+        <span>Total</span>
+        <span id="total-value">$ {{ total }}</span>
+      </div>
+    </div>
+
+    <input type="hidden" name="ticket_type" id="ticket_type_input" value="{{ order.ticket_type }}">
+    <input type="hidden" name="quantity" id="quantity_input" value="{{ order.quantity }}">
+
+    <div class="contact-methods">
+      <label><input type="radio" name="contact_method" value="email" checked> Email</label>
+      <div class="contact-fields">
+        <input type="text" name="first_name" placeholder="First name">
+        <input type="email" name="email" placeholder="Email">
+      </div>
+      <label><input type="radio" name="contact_method" value="telegram"> Telegram</label>
+      <label><input type="radio" name="contact_method" value="whatsapp"> WhatsApp</label>
+    </div>
+
+    <button type="submit" class="btn btn-rose btn-block" id="add-to-order-btn">Add to Order</button>
+  </div>
+</div>
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function(){
+  const rows = document.querySelectorAll('.price-row');
+  const ticketTypeInput = document.getElementById('ticket_type_input');
+  const quantityInput = document.getElementById('quantity_input');
+  const totalValue = document.getElementById('total-value');
+
+  function updateTotal(ticketType, quantity){
+    fetch("{{ url_for('reservation_update') }}", {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ticket_type: ticketType, quantity: quantity})
+    })
+    .then(r => r.json())
+    .then(data => {
+      totalValue.textContent = '$ ' + data.total;
+      ticketTypeInput.value = data.ticket_type;
+      quantityInput.value = data.quantity;
+    });
+  }
+
+  rows.forEach(row => {
+    const ticketType = row.dataset.ticket;
+    const qtyValue = row.querySelector('.qty-value');
+    row.querySelector('.qty-plus').addEventListener('click', () => {
+      // only one ticket type active at a time, like the original design
+      rows.forEach(r => { if (r !== row) r.querySelector('.qty-value').textContent = 0; });
+      let qty = parseInt(qtyValue.textContent) + 1;
+      qtyValue.textContent = qty;
+      updateTotal(ticketType, qty);
+    });
+    row.querySelector('.qty-minus').addEventListener('click', () => {
+      let qty = Math.max(0, parseInt(qtyValue.textContent) - 1);
+      qtyValue.textContent = qty;
+      updateTotal(ticketType, qty);
+    });
+  });
+
+  document.getElementById('reservation-form').addEventListener('submit', function(e){
+    if (parseInt(quantityInput.value) < 1) {
+      e.preventDefault();
+      alert('Please select at least one ticket.');
+    }
+  });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}Your Order{% endblock %}
+{% block content %}
+
+<a class="back-link" href="{{ url_for('reservation') }}">&#8592; Back</a>
+
+<div class="section-title-row" style="justify-content:space-between;">
+  <h1 class="mt-0">Your Order</h1>
+  <div class="checkout-timer">Order Timer &#8226; <span id="timer">--:--</span></div>
+</div>
+
+<p style="max-width:520px;">If you have a Promotional or Coupon Code, please enter the code so that it may be applied to your order.</p>
+
+<div class="promo-row">
+  <input type="text" id="promo-input" placeholder="Enter promo">
+  <button class="btn btn-outline" id="apply-promo-btn" type="button">Apply</button>
+</div>
+<div class="promo-msg" id="promo-msg"></div>
+
+<div class="order-table">
+  <div class="order-table-head">
+    <span>Item</span><span>Type</span><span>Quantity</span><span>Price</span><span>Total</span>
+  </div>
+  <div class="order-table-row">
+    <span>
+      <div class="item-name">{{ ex.title }}</div>
+      <div class="item-sub">The {{ booking.date_label.split('• ')[-1] }} - {{ booking.time_slot }}</div>
+    </span>
+    <span>{{ ex.tickets[order.ticket_type].label }}</span>
+    <span id="order-qty">{{ order.quantity }}</span>
+    <span>$ {{ ex.tickets[order.ticket_type].price }}</span>
+    <span id="order-subtotal">$ {{ subtotal }}</span>
+  </div>
+</div>
+
+<div class="order-total-line">
+  <span>Order Total</span>
+  <span id="order-total">$ {{ total }}</span>
+</div>
+
+<form method="post" action="{{ url_for('checkout_pay') }}" id="pay-form">
+<input type="hidden" name="payment_method" id="payment_method_input" value="card">
+
+{% if error %}<div class="form-error">{{ error }}</div>{% endif %}
+
+<h2>How do you want to pay?</h2>
+<div class="pay-methods">
+  <div class="pay-method-tab active" data-method="card">
+    <strong>Credit or Debit Card</strong>
+    <div class="sub">Visa, Mastercard, Maestro, MIR</div>
+  </div>
+</div>
+
+<div class="card-fields" id="card-fields">
+  <input type="text" placeholder="Credit card">
+  <div class="row3">
+    <input type="text" placeholder="Month (MM)">
+    <input type="text" placeholder="Year (YY)">
+    <input type="text" placeholder="CVC">
+  </div>
+</div>
+
+<div class="pay-method-tab" data-method="paypal" style="border:1px solid #e3dcd3; text-align:center; font-weight:700;">
+  PayPal
+</div>
+
+<div class="terms-row">
+  <input type="checkbox" name="agree_terms" id="agree_terms">
+  <label for="agree_terms">I have read and agreed with <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.</label>
+</div>
+
+<button type="submit" class="btn btn-rose btn-block" id="pay-btn">Pay</button>
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function(){
+  let secondsLeft = {{ seconds_left }};
+  const timerEl = document.getElementById('timer');
+  const payBtn = document.getElementById('pay-btn');
+
+  function render(){
+    const m = Math.floor(secondsLeft / 60);
+    const s = secondsLeft % 60;
+    timerEl.textContent = m + ':' + String(s).padStart(2, '0');
+    if (secondsLeft <= 0) {
+      payBtn.disabled = true;
+      payBtn.textContent = 'Reservation expired';
+      clearInterval(interval);
+    }
+  }
+  render();
+  const interval = setInterval(() => {
+    secondsLeft -= 1;
+    render();
+  }, 1000);
+
+  document.getElementById('apply-promo-btn').addEventListener('click', function(){
+    const code = document.getElementById('promo-input').value.trim();
+    const msg = document.getElementById('promo-msg');
+    fetch("{{ url_for('checkout_promo') }}", {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({code: code})
+    })
+    .then(r => r.json().then(data => ({ok: r.ok, data: data})))
+    .then(({ok, data}) => {
+      if (!ok) {
+        msg.textContent = data.error;
+        msg.className = 'promo-msg err';
+        return;
+      }
+      document.getElementById('order-total').textContent = '$ ' + data.total;
+      if (data.valid) {
+        msg.textContent = 'Promo code applied: -$ ' + data.discount;
+        msg.className = 'promo-msg ok';
+      } else {
+        msg.textContent = '';
+      }
+    });
+  });
+
+  document.querySelectorAll('.pay-method-tab').forEach(tab => {
+    tab.addEventListener('click', function(){
+      document.querySelectorAll('.pay-method-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('payment_method_input').value = tab.dataset.method;
+      document.getElementById('card-fields').style.display = (tab.dataset.method === 'card') ? 'grid' : 'none';
+    });
+  });
+})();
+</script>
+{% endblock %}

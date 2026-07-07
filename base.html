@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Museum of Minimalism{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header container">
+    <div class="logo">M &#8739;&#8739; M</div>
+    <nav class="main-nav">
+      <a href="{{ url_for('index') }}#art">Art</a>
+      <a href="{{ url_for('index') }}#exhibitions">Exhibitions</a>
+      <a href="{{ url_for('index') }}#events">Events</a>
+      <a href="{{ url_for('index') }}#future">In Future</a>
+    </nav>
+    <div class="header-icons">
+      <span title="Menu" id="menu-toggle-btn" class="menu-toggle-btn">&#9776;</span>
+      <span title="Search" id="search-toggle-btn" class="search-toggle-btn">&#128269;</span>
+
+      <nav class="menu-dropdown" id="menu-dropdown">
+        <a href="{{ url_for('index') }}#art">Art</a>
+        <a href="{{ url_for('index') }}#exhibitions">Exhibitions</a>
+        <a href="{{ url_for('index') }}#events">Events</a>
+        <a href="{{ url_for('index') }}#future">In Future</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="search-overlay" id="search-overlay">
+    <div class="search-box">
+      <div class="search-input-row">
+        <span class="search-icon">&#128269;</span>
+        <input type="text" id="search-input" placeholder="Search exhibitions, events, archive…" autocomplete="off">
+        <span class="search-close" id="search-close-btn" title="Close">&times;</span>
+      </div>
+      <div class="search-results" id="search-results">
+        <div class="search-hint">Start typing to search the museum…</div>
+      </div>
+    </div>
+  </div>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <div class="footer-logo">M &#8739;&#8739; M</div>
+
+          <div class="footer-contact-row">
+            <div class="footer-links-heavy">Contact</div>
+            <a class="footer-contact-value" href="mailto:info@minm.com">Info@minm.com</a>
+          </div>
+
+          <div class="footer-contact-row">
+            <div class="footer-links-heavy">Follow</div>
+            <div class="footer-social-icons">
+              <a href="#" class="social-icon" title="Facebook" aria-label="Facebook">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              </a>
+              <a href="#" class="social-icon" title="Instagram" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4.2"/><line x1="17.3" y1="6.7" x2="17.31" y2="6.7"/></svg>
+              </a>
+              <a href="#" class="social-icon" title="YouTube" aria-label="YouTube">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5.5" width="20" height="13" rx="4"/><polygon points="10 9 15.5 12 10 15" fill="currentColor" stroke="none"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="footer-contact-row">
+            <div class="footer-links-heavy">Write</div>
+            <div class="footer-social-icons">
+              <a href="#" class="social-icon" title="Telegram" aria-label="Telegram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </a>
+              <a href="#" class="social-icon" title="Messenger" aria-label="Messenger">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3C6.48 3 2 6.94 2 11.8c0 2.78 1.44 5.24 3.7 6.86V22l3.38-1.86c.94.26 1.94.4 2.92.4 5.52 0 10-3.94 10-8.74S17.52 3 12 3z"/><path d="M6.7 13.3l3.5-3.7 2.6 2.5 3.5-3.7"/></svg>
+              </a>
+              <a href="#" class="social-icon" title="WhatsApp" aria-label="WhatsApp">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 3.7A11 11 0 0 0 3.6 17.8L2 22l4.4-1.5A11 11 0 1 0 20.5 3.7z"/><path d="M8.5 8.6c.3-.7.6-.7 1-.7h.6c.2 0 .5 0 .7.5.2.5.7 1.6.8 1.8.1.2.1.4 0 .6-.1.2-.2.3-.4.5-.2.2-.4.4-.2.7.2.4 1 1.5 2 2.5 1.3 1.2 2 1.4 2.3 1.4.3 0 .5-.2.7-.4l.5-.6c.2-.2.4-.3.7-.2l1.6.8c.3.1.5.2.5.5 0 .3 0 1.1-.4 1.6-.4.5-1.3 1-2.4.9-1.8-.2-4.2-1.4-5.9-3.3-1.5-1.7-2.3-3.4-2.5-4.1-.2-.7-.1-1.2.2-1.7z" fill="currentColor" stroke="none"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div></div>
+        <div class="footer-col">
+          <h3>Museum Info</h3>
+          <a href="#">About</a>
+          <a href="#">Art</a>
+          <a href="{{ url_for('index') }}#exhibitions">Exhibitions</a>
+          <a href="{{ url_for('index') }}#events">Events</a>
+          <a href="#">In Future</a>
+          <a href="#">Archive</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>Demo project • built with Flask</span>
+        <span>Privacy Policy &nbsp; Use of cookies</span>
+        <span>&copy; 2026, The Museum of Minimalism</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (function(){
+    var menuBtn = document.getElementById('menu-toggle-btn');
+    var menuDropdown = document.getElementById('menu-dropdown');
+    if (!menuBtn || !menuDropdown) return;
+
+    function closeMenu(){
+      menuDropdown.classList.remove('open');
+      menuBtn.classList.remove('active');
+    }
+    function openMenu(){
+      menuDropdown.classList.add('open');
+      menuBtn.classList.add('active');
+    }
+
+    menuBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      if (menuDropdown.classList.contains('open')) { closeMenu(); } else { openMenu(); }
+    });
+    menuDropdown.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', closeMenu);
+    });
+    document.addEventListener('click', function(e){
+      if (!menuDropdown.contains(e.target) && e.target !== menuBtn) closeMenu();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') closeMenu();
+    });
+  })();
+  </script>
+
+  <script>
+  window.SEARCH_INDEX = {{ search_index|tojson }};
+  (function(){
+    var toggleBtn = document.getElementById('search-toggle-btn');
+    var overlay = document.getElementById('search-overlay');
+    var closeBtn = document.getElementById('search-close-btn');
+    var input = document.getElementById('search-input');
+    var results = document.getElementById('search-results');
+    if (!toggleBtn || !overlay) return;
+
+    function openSearch(){
+      overlay.classList.add('open');
+      document.body.classList.add('search-lock');
+      setTimeout(function(){ input.focus(); }, 50);
+    }
+    function closeSearch(){
+      overlay.classList.remove('open');
+      document.body.classList.remove('search-lock');
+      input.value = '';
+      renderResults('');
+    }
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, function(c){
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+      });
+    }
+    function renderResults(query){
+      var q = query.trim().toLowerCase();
+      results.innerHTML = '';
+      if (!q) {
+        results.innerHTML = '<div class="search-hint">Start typing to search the museum…</div>';
+        return;
+      }
+      var matches = (window.SEARCH_INDEX || []).filter(function(item){
+        return (item.title + ' ' + (item.subtitle || '')).toLowerCase().indexOf(q) !== -1;
+      }).slice(0, 8);
+      if (!matches.length) {
+        results.innerHTML = '<div class="search-hint">No results for &ldquo;' + escapeHtml(query) + '&rdquo;</div>';
+        return;
+      }
+      matches.forEach(function(item){
+        var a = document.createElement('a');
+        a.href = item.url;
+        a.className = 'search-result';
+        a.innerHTML = '<span class="search-result-type">' + escapeHtml(item.type) + '</span>' +
+                      '<span class="search-result-title">' + escapeHtml(item.title) + '</span>' +
+                      (item.subtitle ? '<span class="search-result-sub">' + escapeHtml(item.subtitle) + '</span>' : '');
+        results.appendChild(a);
+      });
+    }
+
+    toggleBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      if (overlay.classList.contains('open')) { closeSearch(); } else { openSearch(); }
+    });
+    closeBtn.addEventListener('click', closeSearch);
+    overlay.addEventListener('click', function(e){
+      if (e.target === overlay) closeSearch();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') closeSearch();
+    });
+    input.addEventListener('input', function(){ renderResults(input.value); });
+    input.addEventListener('keydown', function(e){
+      if (e.key === 'Enter') {
+        var first = results.querySelector('.search-result');
+        if (first) window.location.href = first.getAttribute('href');
+      }
+    });
+  })();
+  </script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

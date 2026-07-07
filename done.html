@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Done!{% endblock %}
+{% block content %}
+
+<div class="done-hero">
+  <h1 class="mt-0">Done!</h1>
+  <div class="progress"></div>
+</div>
+
+<div class="done-summary">
+  <div>
+    <h3>{{ ex.title }}</h3>
+    <p style="color:#4c4642;">Your excursion has been paid!<br>We have sent the invitation link to your Email.</p>
+    <div class="session-card" style="border:none; padding:0; margin-top:18px;">
+      <div class="row">&#128337; {{ booking.time_slot }}</div>
+      <div class="row">&#128197; {{ booking.date_label }}</div>
+    </div>
+  </div>
+  <div class="done-photo" {% if ex.done_image or ex.image %}style="background-image:url('{{ url_for('static', filename=ex.done_image or ex.image) }}')"{% endif %}></div>
+</div>
+
+<section>
+  <div class="section-title-row">
+    <div class="line"></div>
+    <h2 class="mt-0">Recommendations</h2>
+    <div class="line"></div>
+  </div>
+  <p class="text-muted" style="margin-bottom:24px;">What other experiences would you like to visit?</p>
+
+  <div class="recommend-grid">
+    {% for r in recommendations %}
+    <div>
+      <div class="recommend-card" {% if r.image %}style="background-image:url('{{ url_for('static', filename=r.image) }}')"{% endif %}>
+        <span class="artist">{{ r.artist }}</span>
+        <span class="title">{{ r.title.upper() }}</span>
+      </div>
+      <a class="btn btn-outline" href="{{ url_for('index') }}">Read more</a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<div style="text-align:center; margin: 40px 0;">
+  <a class="btn btn-rose" href="{{ url_for('index') }}">Back to home</a>
+</div>
+
+{% endblock %}

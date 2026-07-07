@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}{{ ex.title }} – Museum of Minimalism{% endblock %}
+{% block content %}
+
+<a class="back-link" href="{{ url_for('index') }}">&#8592; Back</a>
+
+<div class="ex-hero" {% if ex.image %}style="background-image:url('{{ url_for('static', filename=ex.image) }}')"{% endif %}>
+  <div class="ex-hero-panel">
+    <h1 style="color:var(--ink); font-size:32px;">{{ ex.title.upper() }}</h1>
+    <div class="dates">{{ ex.dates }}</div>
+    <p>{{ ex.intro }}</p>
+    {% if ex.duration %}<div class="duration">&#9200; {{ ex.duration }}</div>{% endif %}
+  </div>
+</div>
+
+{% for s in ex.sections %}
+<div class="concept-block">
+  {% if loop.index0 % 2 == 0 %}
+  <div class="visual" {% if s.image %}style="background-image:url('{{ url_for('static', filename=s.image) }}')"{% endif %}></div>
+  <div>
+    <div class="eyebrow">{{ s.eyebrow }}</div>
+    <h3>{{ s.title }}</h3>
+    <p style="color:#4c4642;">{{ s.text }}</p>
+  </div>
+  {% else %}
+  <div>
+    <div class="eyebrow">{{ s.eyebrow }}</div>
+    <h3>{{ s.title }}</h3>
+    <p style="color:#4c4642;">{{ s.text }}</p>
+  </div>
+  <div class="visual" {% if s.image %}style="background-image:url('{{ url_for('static', filename=s.image) }}')"{% endif %}></div>
+  {% endif %}
+  <span class="big-number">{{ s.number }}</span>
+</div>
+{% endfor %}
+
+{% if ex.artist_bio %}
+<div class="artist-block">
+  <div>
+    <h2>{{ ex.artist }}</h2>
+    <div class="role">Contemporary artist of minimalism</div>
+    <p style="color:#4c4642;">{{ ex.artist_bio }}</p>
+    {% if ex.quote %}<blockquote>{{ ex.quote }}</blockquote>{% endif %}
+  </div>
+  <div class="artist-photo" {% if ex.artist_photo %}style="background-image:url('{{ url_for('static', filename=ex.artist_photo) }}')"{% endif %}></div>
+</div>
+{% endif %}
+
+<section class="plan-visit">
+  <h2>Plan your visit</h2>
+  <p class="sub">Select a day and time for your visit.</p>
+
+  <form method="post" action="{{ url_for('plan_visit', slug=ex.slug) }}" id="plan-form">
+    <input type="hidden" name="date_label" value="monday • May 16, 2021">
+    <input type="hidden" name="time_slot" id="time_slot_input" value="{{ ex.time_slots[0] }}">
+    <input type="hidden" name="interaction" id="interaction_input" value="{{ ex.interactions.keys()|list|first }}">
+
+    <div class="day-toggle" style="position:relative;">
+      <button type="button" class="btn btn-outline">Today</button>
+      <button type="button" class="btn btn-dark" id="calendar-toggle-btn">Calendar · May 16 · 2021</button>
+
+      <div class="calendar-popup" id="calendar-popup">
+        <div class="cal-head">
+          <span class="cal-nav">&#8249;</span>
+          <strong>May 2021</strong>
+          <span class="cal-nav">&#8250;</span>
+        </div>
+        <div class="cal-weekdays">
+          <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+        </div>
+        <div class="cal-days">
+          <span class="empty"></span><span class="empty"></span><span class="empty"></span><span class="empty"></span><span class="empty"></span><span class="empty"></span><span>1</span>
+          <span>2</span><span class="today">3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span>
+          <span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span>
+          <span class="selected-day" data-date="monday • May 16, 2021" data-label="Calendar · May 16 · 2021">16</span><span data-date="monday • May 17, 2021" data-label="Calendar · May 17 · 2021">17</span><span data-date="tuesday • May 18, 2021" data-label="Calendar · May 18 · 2021">18</span><span data-date="wednesday • May 19, 2021" data-label="Calendar · May 19 · 2021">19</span><span data-date="thursday • May 20, 2021" data-label="Calendar · May 20 · 2021">20</span><span data-date="friday • May 21, 2021" data-label="Calendar · May 21 · 2021">21</span><span data-date="saturday • May 22, 2021" data-label="Calendar · May 22 · 2021">22</span>
+          <span data-date="sunday • May 23, 2021" data-label="Calendar · May 23 · 2021">23</span><span data-date="monday • May 24, 2021" data-label="Calendar · May 24 · 2021">24</span><span data-date="tuesday • May 25, 2021" data-label="Calendar · May 25 · 2021">25</span><span data-date="wednesday • May 26, 2021" data-label="Calendar · May 26 · 2021">26</span><span data-date="thursday • May 27, 2021" data-label="Calendar · May 27 · 2021">27</span><span data-date="friday • May 28, 2021" data-label="Calendar · May 28 · 2021">28</span><span data-date="saturday • May 29, 2021" data-label="Calendar · May 29 · 2021">29</span>
+          <span data-date="sunday • May 30, 2021" data-label="Calendar · May 30 · 2021">30</span><span data-date="monday • May 31, 2021" data-label="Calendar · May 31 · 2021">31</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="slot-grid">
+      {% for slot in ex.time_slots %}
+      <button type="button" class="slot-btn {% if loop.first %}selected{% endif %}" data-slot="{{ slot }}">{{ slot }}</button>
+      {% endfor %}
+    </div>
+
+    <p class="sub">Select an interaction for your visit for reservation your tickets.</p>
+    <div class="interaction-grid">
+      {% for key, i in ex.interactions.items() %}
+      <div class="interaction-card {% if loop.first %}selected{% endif %}" data-interaction="{{ key }}">
+        <div class="icon"><span>{{ i.label }}</span></div>
+        <p>{{ i.text }}</p>
+        <small>To view you need<br>{{ i.requires }}</small>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="plan-actions">
+      <a class="back-link" href="{{ url_for('index') }}">&#8592; Back</a>
+      <button type="submit" class="btn btn-rose">Continue</button>
+    </div>
+  </form>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.slot-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.slot-btn').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+    document.getElementById('time_slot_input').value = btn.dataset.slot;
+  });
+});
+document.querySelectorAll('.interaction-card').forEach(function(card){
+  card.addEventListener('click', function(){
+    document.querySelectorAll('.interaction-card').forEach(c=>c.classList.remove('selected'));
+    card.classList.add('selected');
+    document.getElementById('interaction_input').value = card.dataset.interaction;
+  });
+});
+
+(function(){
+  const toggleBtn = document.getElementById('calendar-toggle-btn');
+  const popup = document.getElementById('calendar-popup');
+  const dateInput = document.querySelector('input[name="date_label"]');
+  if (!toggleBtn || !popup) return;
+
+  toggleBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    popup.classList.toggle('open');
+  });
+  document.addEventListener('click', function(e){
+    if (!popup.contains(e.target) && e.target !== toggleBtn) popup.classList.remove('open');
+  });
+  popup.querySelectorAll('.cal-days span[data-date]').forEach(function(day){
+    day.addEventListener('click', function(){
+      popup.querySelectorAll('.cal-days span').forEach(d => d.classList.remove('selected-day'));
+      day.classList.add('selected-day');
+      toggleBtn.textContent = day.dataset.label;
+      if (dateInput) dateInput.value = day.dataset.date;
+      popup.classList.remove('open');
+    });
+  });
+})();
+</script>
+{% endblock %}

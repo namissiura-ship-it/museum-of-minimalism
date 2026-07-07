@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Museum Minimalism{% endblock %}
+{% block content %}
+
+<section class="hero" id="art">
+  <div class="hero-text">
+    <div class="hero-eyebrow">Museum</div>
+    <h1>Minimalism</h1>
+    <p>On our online-platform, you can immerse in the digital aesthetics of simplicity, balance and forms of minimal art.</p>
+    <a class="btn btn-rose" href="{{ url_for('exhibition', slug=featured.slug) }}">Read more</a>
+  </div>
+  <div class="hero-art">
+    <img src="{{ url_for('static', filename='img/hero-orb.jpg') }}" alt="">
+  </div>
+</section>
+
+<section id="exhibitions">
+  <div class="section-title-row">
+    <h2 class="mt-0">Exhibition</h2>
+  </div>
+
+  <div class="feature-card" style="margin-bottom:36px;">
+    <div class="feature-visual" {% if featured.image %}style="background-image:url('{{ url_for('static', filename=featured.image) }}')"{% endif %}>{{ featured.title }}</div>
+    <div>
+      <div class="feature-meta">{{ featured.artist.upper() }}</div>
+      <h3 style="font-size:26px;">{{ featured.title }} Sculpture: Forty Years</h3>
+      <div class="feature-dates">{{ featured.dates }}</div>
+      <p>{{ featured.intro }}</p>
+      <a class="btn btn-rose" href="{{ url_for('exhibition', slug=featured.slug) }}">Read more</a>
+    </div>
+  </div>
+
+  <div class="ex-grid">
+    {% for ex in exhibitions %}
+    <div class="ex-card" {% if ex.image %}style="background-image:url('{{ url_for('static', filename=ex.image) }}')"{% endif %}>
+      <div>
+        <div class="ex-title">{{ ex.title }}</div>
+        <div class="ex-artist">{{ ex.artist }}</div>
+        <div class="ex-date">&#128197; {{ ex.dates }}</div>
+        <p>{{ ex.intro }}</p>
+      </div>
+      <a class="btn btn-outline" href="{{ url_for('exhibition', slug=ex.slug) }}">Read more</a>
+    </div>
+    {% endfor %}
+  </div>
+  <div style="text-align:center; margin-top:30px;">
+    <a class="btn btn-outline" href="#exhibitions">See all exhibitions</a>
+  </div>
+</section>
+
+<section id="events">
+  <div class="section-title-row">
+    <h2 class="mt-0">Event</h2>
+  </div>
+  {% for ev in events %}
+  <div class="event-row">
+    <div class="event-title">{{ ev.title }}</div>
+    <div class="event-thumb" {% if ev.image %}style="background-image:url('{{ url_for('static', filename=ev.image) }}')"{% endif %}></div>
+    <div>
+      <div class="text-muted" style="font-size:13px; margin-bottom:6px;">{{ ev.type }}</div>
+      <p style="font-size:14px; color:#4c4642;">{{ ev.text }}</p>
+      <div class="event-time">&#128337; {{ ev.time }}</div>
+      <div class="event-time" style="margin-bottom:14px;">&#128197; {{ ev.date }}</div>
+      <a class="btn btn-outline" href="#">Read more</a>
+    </div>
+  </div>
+  {% endfor %}
+  <div style="text-align:center; margin-top:30px;">
+    <a class="btn btn-outline" href="#events">See all events</a>
+  </div>
+</section>
+
+<section id="future">
+  <div class="section-title-row"><h2 class="mt-0">Listen</h2></div>
+  <div class="podcast-card">
+    <div class="podcast-tile">Aesthetics<br>of minimalism</div>
+    <div class="waveform"></div>
+    <div style="max-width:280px;">
+      <div class="text-muted" style="font-size:13px; margin-bottom:6px;">&#9200; 24:12</div>
+      <p style="font-size:14px;">Minimalism doesn't pretend to be an additional meaning - only the order, beauty and simplicity of the object itself has meaning.</p>
+    </div>
+  </div>
+</section>
+
+<section id="archive">
+  <div class="archive-banner">
+    <span>ART ARCHIVE&nbsp;&nbsp;/&nbsp;&nbsp;<span style="font-weight:400;">minimalism</span></span>
+  </div>
+  <div class="archive-grid">
+    {% for a in archive %}
+    <div class="archive-item">
+      <div class="thumb" {% if a.image %}style="background-image:url('{{ url_for('static', filename=a.image) }}')"{% endif %}></div>
+      <div class="date">{{ a.date }}</div>
+      <h4>{{ a.title }}</h4>
+      <p>{{ a.artist }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <div style="text-align:center; margin-top:30px;">
+    <a class="btn btn-outline" href="#">See all archive</a>
+  </div>
+</section>
+
+<div class="newsletter">
+  <span style="font-weight:700;">Newsletters sign-up</span>
+  <input type="email" placeholder="Enter your email">
+  <button class="btn btn-dark">Subscribe</button>
+</div>
+
+{% endblock %}
